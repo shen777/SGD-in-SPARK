@@ -59,7 +59,7 @@ def SGD_log(parsedData,ita,trainSize,iteration_time,dimension):
             temp[0].label=-1
         #print("label=",temp[0].label)
         w=w+ita*theta(-temp[0].label*np.dot(w,temp[0].features))*temp[0].label*temp[0].features
-        print("i= ",i," w= ",w)
+        #print("i= ",i," w= ",w)
     #ans=eca(y,w,x,trainSize)
     #print(numData.reduce(lambda x,y:x+y)/numData.count())
     ans=parsedData.filter( lambda x: np.dot(x.features,w)*(x.label-0.5)<=0 ).count()/float(parsedData.count())
@@ -73,24 +73,9 @@ sc = getSparkContext()
 data = sc.textFile("gs://vm_hw4/data_banknote_authentication.txt")
 parsedData = data.map(mapper)
 dimension=4
-ita=1
+ita=0.1
 #test
 iteration_time=100
 trainSize=parsedData.count()
 print("Training Error = " + str(SGD_log(parsedData,ita,trainSize,iteration_time,dimension)))
 
-"""
-# Train model
-model = LogisticRegressionWithSGD.train(parsedData)
-
-# Predict the first elem will be actual data and the second 
-# item will be the prediction of the model
-labelsAndPreds = parsedData.map(lambda point: (int(point.label), 
-        model.predict(point.features)))
-
-# Evaluating the model on training data
-trainErr = labelsAndPreds.filter(lambda (v, p): v != p).count() / float(parsedData.count())
-
-# Print some stuff
-print("Training Error = " + str(trainErr))
-"""
